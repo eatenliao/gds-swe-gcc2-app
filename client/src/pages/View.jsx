@@ -12,6 +12,8 @@ const View = () => {
   const columnHelper = createColumnHelper();
 
   useEffect(() => {
+    // add CORS header to the request
+    axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
     axios
       .get(`${BASE_URL}/api/getResponses`)
       .then((res) => {

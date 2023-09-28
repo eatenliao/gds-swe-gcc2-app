@@ -34,6 +34,7 @@ const Form = () => {
           }}
           onSubmit={(values) => {
             // send data to backend
+            axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
             axios
               .post(`${BASE_URL}/api/postResponse`, values)
               .then((res) => {
