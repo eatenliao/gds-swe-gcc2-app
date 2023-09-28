@@ -18,6 +18,10 @@ app.use(function (req, res, next) {
     next();
   });
 
+app.use('/', (req, res) => {
+    res.send('Hello World');
+});
+
 app.use('/api', api);
 
 // app.use('/api', require('./routes/api'));
