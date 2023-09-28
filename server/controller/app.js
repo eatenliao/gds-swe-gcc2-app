@@ -9,9 +9,6 @@ app.use(express.static("./public"))
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-    res.send('server is up and running!');
-});
 
 app.use('/api', api);
 
