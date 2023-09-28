@@ -6,11 +6,7 @@ const api = require('./api');
 
 app.use(express.json());
 app.use(express.static("./public"))
-app.use(
-    cors({
-      origin: "*",
-    })
-  );
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use(function (req, res, next) {
