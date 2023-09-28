@@ -10,12 +10,19 @@ const View = () => {
   // firstly, get the data from the backend
   const [data, setData] = useState([]);
   const columnHelper = createColumnHelper();
+  const config = {
+    headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+    }
+    };
+
 
   useEffect(() => {
     // add CORS header to the request
     axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
     axios
-      .get(`${BASE_URL}/api/getResponses`)
+      .get(`${BASE_URL}/api/getResponses`, config)
       .then((res) => {
         console.log(res);
         console.log(res.data.rows);

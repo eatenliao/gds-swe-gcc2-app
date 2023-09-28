@@ -21,6 +21,11 @@ const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Form = () => {
   const toast = useToast();
+  const config = {
+    headers: {
+        "Access-Control-Allow-Origin": "*",
+    }
+    };
   
   return (
     <Flex bg="gray.100" align="center" justify="center" h="100vh">
@@ -34,9 +39,8 @@ const Form = () => {
           }}
           onSubmit={(values) => {
             // send data to backend
-            axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
             axios
-              .post(`${BASE_URL}/api/postResponse`, values)
+              .post(`${BASE_URL}/api/postResponse`, values, config)
               .then((res) => {
                 console.log(res);
                 console.log(res.data);
