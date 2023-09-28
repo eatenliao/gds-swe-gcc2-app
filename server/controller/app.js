@@ -6,9 +6,17 @@ const api = require('./api');
 
 app.use(express.json());
 app.use(express.static("./public"))
-app.use(cors( {origin: process.env.CLIENT_URL} ));
+app.use(
+    cors({
+      origin: "*",
+    })
+  );
 app.use(bodyParser.json());
 
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    next();
+  });
 
 app.use('/api', api);
 
