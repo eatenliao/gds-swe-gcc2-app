@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const apiDB = require("../model/api");
 
-router.get("/getUsers", (req, res) => {
-    apiDB.getUsers((err, result) => {
+router.get("/getResponses", (req, res) => {
+    apiDB.getResponses((err, result) => {
         if (err) {
             return res.status(500).send({ message: "Internal Server Error" });
         }

@@ -1,38 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { useHistory, useLocation, useNavigate } from "react-router-dom";
+import React from "react";
 import { Formik, Field, useFormik } from "formik";
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormLabel,
   FormErrorMessage,
   Input,
   VStack,
-//   RadioGroup,
+  //   RadioGroup,
   Radio,
-  Stack
+  Stack,
+  useToast
 } from "@chakra-ui/react";
 import RadioGroup from "../components/radioGroup";
 import axios from "axios";
+// require('dotenv').config( {path: '../.env'} );
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Form = () => {
-  const formik = useFormik({
-    initialValues: {
-      name: "", // Name of the person
-      temperature: "", // Temperature of the person in Celsius
-      question1: "", // Do you have any of the following symptoms now or within the last 14 days:  Cough, smell/test impairment, fever, breathing difficulties, body aches, headaches, fatigue, sore throat, diarrhea, runny nose(even if your symptoms are mild)?
-      question2: "", // Have you been in contact with anyone who is suspected to have/ has been diagnosed with Covid-19 within the last 14 days?
-    },
-    onSubmit: (values) => {
-      // JSONIFY the values then send to backend via POST request? (async, axios)
-      alert(JSON.stringify(values, null, 2));
-    },
-  });
-
-
+  const toast = useToast();
+  
   return (
     <Flex bg="gray.100" align="center" justify="center" h="100vh">
       <Box bg="white" p={6} rounded="md" w={96}>
@@ -44,49 +33,136 @@ const Form = () => {
             question2: "", // Have you been in contact with anyone who is suspected to have/ has been diagnosed with Covid-19 within the last 14 days?
           }}
           onSubmit={(values) => {
-            alert(JSON.stringify(values, null, 2));
+            // send data to backend
+            axios
+              .post(`${BASE_URL}/api/postResponse`, values)
+              .then((res) => {
+                console.log(res);
+                console.log(res.data);
+                // alert("Form submitted successfully!");
+                toast({
+                  title: "Form submitted successfully!",
+                  status: "success",
+                  isClosable: true,
+                  position: "top",
+                  duration: 3000,
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+                // alert("Error submitting form!");
+                toast({
+                  title: "Error submitting form!",
+                  status: "error",
+                  isClosable: true,
+                  position: "top",
+                  duration: 3000,
+                });
+              });
+            // reset form
+            values.name = "";
+            values.temperature = "";
+            values.question1 = "";
+            values.question2 = "";
+            
+            // sleep for 1.5 seconds to allow time for the form to reset
+            setTimeout(() => {
+              window.location.reload(); 
+            }, 1500);
+
           }}
         >
           {({ handleSubmit, errors, touched }) => (
             <form onSubmit={handleSubmit}>
               <VStack spacing={4} align="flex-start">
-                <FormControl>
+                <FormControl isInvalid={!!errors.name && touched.name}>
                   <FormLabel htmlFor="name">Name</FormLabel>
-                    <Field as={Input} id="name" name="name" variant="filled" placeholder="eg. John Doe" />
+                  <Field
+                    as={Input}
+                    id="name"
+                    name="name"
+                    variant="filled"
+                    placeholder="eg. John Doe"
+                    validate={(value) => {
+                      let error;
+                      if (!value) {
+                        error = "Name is required";
+                      }
+                      return error;
+                    }}
+                  />
+                  <FormErrorMessage>{errors.name}</FormErrorMessage>
+                </FormControl>
+                <FormControl
+                  isInvalid={!!errors.temperature && touched.temperature}
+                >
+                  <FormLabel htmlFor="temperature">Temperature (°C)</FormLabel>
+                  <Field
+                    as={Input}
+                    id="temperature"
+                    name="temperature"
+                    variant="filled"
+                    placeholder="eg. 36.5"
+                    validate={(value) => {
+                      let error;
+                      if (!value) {
+                        error = "Temperature is required";
+                      } else if (isNaN(value)) {
+                        error = "Temperature must be a number";
+                      } else if (value < 35 || value > 42) {
+                        error = "Temperature must be between 35 and 42";
+                      }
+                      return error;
+                    }}
+                  />
+                  <FormErrorMessage>{errors.temperature}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={!!errors.question1 && touched.question1}>
+                  <FormLabel htmlFor="question1">
+                    Do you have any of the following symptoms now or within the
+                    last 14 days: Cough, smell/test impairment, fever, breathing
+                    difficulties, body aches, headaches, fatigue, sore throat,
+                    diarrhea, runny nose (even if your symptoms are mild)?
+                  </FormLabel>
+                  {/* Radio Button YES/NO for question 1 */}
+                  <Field as={RadioGroup} name="question1" id="question1" validate={(value) => {
+                      let error;
+                      if (!value) {
+                        error = "Please select an option";
+                      }
+                      return error;
+                    }
+                  }>
+                    <Stack direction="row">
+                      <Radio value="true">Yes</Radio>
+                      <Radio value="false">No</Radio>
+                    </Stack>
+                  </Field>
+                  <FormErrorMessage>{errors.question1}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={!!errors.question2 && touched.question2}>
+                  <FormLabel htmlFor="question2">
+                    Have you been in contact with anyone who is suspected to
+                    have / has been diagnosed with Covid-19 within the last 14
+                    days?
+                  </FormLabel>
+                  {/* Radio Button YES/NO for question 2 */}
+                  <Field as={RadioGroup} name="question2" id="question2" validate={(value) => {
+                      let error;
+                      if (!value) {
+                        error = "Please select an option";
+                      }
+                      return error;
+                    }
+                  }>
+                    <Stack direction="row">
+                      <Radio value="true">Yes</Radio>
+                      <Radio value="false">No</Radio>
+                    </Stack>
+                  </Field>
+                  <FormErrorMessage>{errors.question2}</FormErrorMessage>
+                </FormControl>
 
-                </FormControl>
-                <FormControl isInvalid={errors.temperature && touched.temperature}>
-                    <FormLabel htmlFor="temperature">Temperature (°C)</FormLabel>
-                    <Field as={Input} id="temperature" name="temperature" variant="filled" placeholder="eg. 36.5" />
-                    <FormErrorMessage>{errors.temperature}</FormErrorMessage>
-                </FormControl>
-                <FormControl>
-                    <FormLabel htmlFor="question1">
-                        Do you have any of the following symptoms now or within the last 14 days: Cough, smell/test impairment, fever, breathing difficulties, body aches, headaches, fatigue, sore throat, diarrhea, runny nose (even if your symptoms are mild)?
-                    </FormLabel>
-                    {/* Radio Button YES/NO for question 1 */}
-                    <Field as={RadioGroup} name="question1" id="question1">
-                        <Stack direction="row">
-                            <Radio value="true">Yes</Radio>
-                            <Radio value="false">No</Radio>
-                        </Stack>
-                    </Field>
-                    
-                </FormControl>
-                <FormControl>
-                    <FormLabel htmlFor="question2">
-                        Have you been in contact with anyone who is suspected to have / has been diagnosed with Covid-19 within the last 14 days?
-                    </FormLabel>
-                    {/* Radio Button YES/NO for question 2 */}
-                    <Field as={RadioGroup} name="question2" id="question2">
-                        <Stack direction="row">
-                            <Radio value="true">Yes</Radio>
-                            <Radio value="false">No</Radio>
-                        </Stack>
-                    </Field>
-                    
-                </FormControl>
-                
                 <Button type="submit" colorScheme="purple" width="full">
                   Submit
                 </Button>

@@ -3,6 +3,7 @@ import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Form from './pages/Form';  
+import View from './pages/View';
 import { extendTheme, ChakraProvider } from '@chakra-ui/react'
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Form />} />
+          <Route path="/view" element={<View />} />
           <Route path="*" element={<h1>404: Not Found</h1>} />
         </Routes>
       </Router>
