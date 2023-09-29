@@ -7,7 +7,9 @@ const api = require('./api');
 app.use(express.json());
 app.use(express.static("./public"))
 app.use(cors({
-  origin: 'https://gds-swe-gcc2-client.vercel.app',
+  origin: ['http://localhost:3000','https://gds-swe-gcc2-client.vercel.app'],
+  methods: ["POST", "GET"],
+  credentials: true
 }));
 app.use(bodyParser.json());
 
