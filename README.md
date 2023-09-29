@@ -30,7 +30,7 @@ Follow these steps to set up the project locally:
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/yourusername/gds-swe-gcc2-app.git
+   git clone https://github.com/eatenliao/gds-swe-gcc2-app.git
    ```
 
 2. Install the project dependencies:
