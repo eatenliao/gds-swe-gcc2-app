@@ -6,7 +6,9 @@ const api = require('./api');
 
 app.use(express.json());
 app.use(express.static("./public"))
-app.use(cors());
+app.use(cors({
+  origin: 'https://gds-swe-gcc2-client.vercel.app',
+}));
 app.use(bodyParser.json());
 
 app.use(function (req, res, next) {
@@ -14,7 +16,7 @@ app.use(function (req, res, next) {
     next();
   });
 
-app.use('/', (req, res) => {
+app.get('/', (req, res) => {
     res.send('Hello World');
 });
 
